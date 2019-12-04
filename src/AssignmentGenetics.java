@@ -20,6 +20,8 @@ public class AssignmentGenetics {
     public static void main(String[] args) throws IOException {
         Fuzzy f = new Fuzzy();
         f.readInput();
+        f.FuzziFication();
+        f.Inference();
     }
     
 }

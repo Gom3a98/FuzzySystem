@@ -5,18 +5,31 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import javafx.util.Pair;
 
 public class Fuzzy {
-
+    class M{
+        String var ;
+        String term;
+        double result;
+        M(String varC ,String termC, double resultC)
+        {
+            var = varC;
+            term=termC;
+            result=resultC;
+        }
+    }
     ArrayList<Rule> Rules = new ArrayList<>();
+        ArrayList <M> FinalResult =new ArrayList<M>();
     ArrayList<Variable> Variables = new ArrayList<>();
-    ArrayList<Pair<String ,Double>> membership = new ArrayList<Pair<String ,Double>>();
+    //ArrayList<Pair<String ,Double>> membership = new ArrayList<Pair<String ,Double>>();
+    ArrayList<M> membership = new ArrayList<M>();
     class Point{
         public int x = 0;
         public int y =0 ;
     }
-    private void FuzziFication(){
+    public void FuzziFication(){
         for (Variable v : Variables)
         {
             ArrayList<Term>myTerms = new ArrayList<>();
@@ -32,46 +45,97 @@ public class Fuzzy {
                     Point p = new Point();
                     p.x = t.Range.get(i);
                     p.y = 1;
-                    if(i==0)
+                    if(i==0||i==t.Range.size()-1)
                     {
                         p.y = 0;        
                     }
-                    if (i==t.Range.size()-1)
-                    {
-                        p.y = 1;
-                    }
-                    points.add(p);
-                    
+                    points.add(p);  
                 }
+
                 for(int j =0 ;j<points.size()-1;j++)
                 {
                     Point p1 = new Point();
                     Point p2 = new Point();
                     p1= points.get(j);
-                    p2= points.get(j);
+                    p2= points.get(j+1);
                     if(p1.x!=p2.x)
                     {
-                        double slop = (p2.y-p1.y)/(p2.x-p1.x);
-                        double b = p1.y - p1.x * slop ;
-                        equations.add(new Pair<Double ,Double>(slop,b));
+                        double slop =(double) (p2.y-p1.y)/(p2.x-p1.x);
+                        double b = (double)p1.y - p1.x * slop ;
+                        double result = v.CrispValue * slop+b;
+                        // System.out.println(v.CrispValue+" "+p2.x + " "+result);
+                        if(0<result&&result<=1)
+                        {
+                            M a= new M(v.name,t.name,result);
+                            membership.add(a);
+                            System.out.println(result+" "+v.name+" "+t.name);
+                        }
                     }
                 }
+               
             }
-            ArrayList<Double>temp = new ArrayList<>();
-            for(int n =0 ;n<equations.size();n++)
-            {
-                double result = v.CrispValue * equations.get(n).getKey()+equations.get(n).getValue();
-                 temp.add(result);
-            }
-            for (int y =0 ;y<temp.size();y++)
-            {
-                if (temp.get(y)!=0)
-                {
-                    membership.add(new Pair<String , Double>(myTerms.indexOf(y)));
-                }
-            }
+
         }
     }
+    double getmembership(String equal[])
+    {
+        for(M a:membership)
+                {
+                    
+                    if(a.var.trim().equals(equal[0].trim())&&a.term.trim().equals(equal[1].trim()))// tirm to remove space
+                    {
+                        
+                        return a.result;
+                    }
+                }
+        return 0 ;
+    }
+
+    public void Inference()
+    {
+        System.out.println("************************");
+        for(Rule  r: Rules)
+        {
+            ArrayList<Double> R= new ArrayList<>();
+            String[]IF =r.body.split("then");
+            String AfterIF[]=IF[1].split("=");
+            String[]And=IF[0].split("AND");
+            String[]Or=IF[0].split("OR");
+            System.out.println(r.body);
+            if(And.length==2){
+            for(String a: And)
+            {
+                String[]equal=a.split("=");
+                
+                double y = getmembership(equal);
+                System.out.println(equal[0] + "  " +equal[1]+ " "+y);
+                R.add(y);
+            }
+            int minIndex = R.indexOf(Collections.min(R));
+            System.out.println(AfterIF[0]+" "+AfterIF[1]+" "+R.get(minIndex));
+            FinalResult.add(new M(AfterIF[0],AfterIF[1],R.get(minIndex)));
+            }
+            else{
+            for(String o: Or)
+            {
+
+                String[]equal=o.split("=");
+                
+                double y = getmembership(equal);
+                System.out.println(equal[0] + "  " +equal[1]+ " "+y);
+                R.add(y);
+               
+            }
+             int maxIndex = R.indexOf(Collections.max(R));
+             System.out.println(AfterIF[0]+" "+AfterIF[1]+" "+R.get(maxIndex));
+             FinalResult.add(new M(AfterIF[0],AfterIF[1],R.get(maxIndex)));
+            }
+             System.out.println("________________");
+        }
+    }
+    
+    
+    
     public void readInput() throws FileNotFoundException, IOException {
         File file = new File("input.txt");
         BufferedReader br = new BufferedReader(new FileReader(file));
