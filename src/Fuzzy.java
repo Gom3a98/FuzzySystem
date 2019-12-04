@@ -69,51 +69,68 @@ public class Fuzzy {
                             M a= new M(v.name,t.name,result);
                             membership.add(a);
                             System.out.println(result+" "+v.name+" "+t.name);
-                            
                         }
                     }
                 }
-                System.out.println("____________");
+               
             }
-System.out.println("*****************************");
+
         }
     }
     double getmembership(String equal[])
     {
         for(M a:membership)
                 {
-                    if(a.var==equal[0]&&a.term==equal[1])
+                    
+                    if(a.var.trim().equals(equal[0].trim())&&a.term.trim().equals(equal[1].trim()))// tirm to remove space
                     {
+                        
                         return a.result;
                     }
                 }
-        return -1 ;
+        return 0 ;
     }
 
-    private void Inference()
+    public void Inference()
     {
-        ArrayList<Double> R= new ArrayList<>();
+        System.out.println("************************");
         for(Rule  r: Rules)
         {
+            ArrayList<Double> R= new ArrayList<>();
             String[]IF =r.body.split("then");
             String AfterIF[]=IF[1].split("=");
             String[]And=IF[0].split("AND");
             String[]Or=IF[0].split("OR");
-            if(And.length!=0)
+            System.out.println(r.body);
+            if(And.length==2){
+            for(String a: And)
             {
-                String[]equal=And[0].split("=");
-                R.add(getmembership(equal));
-                int minIndex = R.indexOf(Collections.min(R));
-                FinalResult.add(new M(AfterIF[0],AfterIF[1],minIndex));
+                String[]equal=a.split("=");
+                
+                double y = getmembership(equal);
+                System.out.println(equal[0] + "  " +equal[1]+ " "+y);
+                R.add(y);
             }
-            else
+            int minIndex = R.indexOf(Collections.min(R));
+            System.out.println(AfterIF[0]+" "+AfterIF[1]+" "+R.get(minIndex));
+            FinalResult.add(new M(AfterIF[0],AfterIF[1],R.get(minIndex)));
+            }
+            else{
+            for(String o: Or)
             {
-                String[]equal=Or[0].split("=");
-                R.add(getmembership(equal));
-                int maxIndex = R.indexOf(Collections.max(R));
-                FinalResult.add(new M(AfterIF[0],AfterIF[1],maxIndex));
+
+                String[]equal=o.split("=");
+                
+                double y = getmembership(equal);
+                System.out.println(equal[0] + "  " +equal[1]+ " "+y);
+                R.add(y);
+               
             }
-            
+             int maxIndex = R.indexOf(Collections.max(R));
+             System.out.println(AfterIF[0]+" "+AfterIF[1]+" "+R.get(maxIndex));
+             FinalResult.add(new M(AfterIF[0],AfterIF[1],R.get(maxIndex)));
+            }
+             System.out.println("________________");
         }
     }
     

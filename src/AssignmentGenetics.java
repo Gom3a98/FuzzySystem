@@ -21,6 +21,7 @@ public class AssignmentGenetics {
         Fuzzy f = new Fuzzy();
         f.readInput();
         f.FuzziFication();
+        f.Inference();
     }
     
 }
