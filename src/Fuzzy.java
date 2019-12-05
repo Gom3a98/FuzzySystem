@@ -37,6 +37,7 @@ public class Fuzzy {
 
     
     public void FuzziFication() {
+        System.out.println("FuzziFication:\n\n");
         for (int v = 0; v < Variables.size() - 1; v++) {
             ArrayList<Term> myTerms = new ArrayList<>();
             ArrayList<Pair<Double, Double>> equations = new ArrayList<Pair<Double, Double>>();
@@ -65,8 +66,9 @@ public class Fuzzy {
                         double slop = (double) (p2.y - p1.y) / (p2.x - p1.x);
                         double b = (double) p1.y - p1.x * slop;
                         double result = Variables.get(v).CrispValue * slop + b;
-                        // System.out.println(v.CrispValue+" "+p2.x + " "+result);
-                        if (0 < result && result <= 1) {
+                         //System.out.println("/////"+Variables.get(v).CrispValue+" "+p1.x + " "+p2.x + " "+result);
+                        
+                        if (0 < result && result <= 1&&Variables.get(v).CrispValue>=p1.x&&Variables.get(v).CrispValue<=p2.x) {
                             M a = new M(Variables.get(v).name, t.name, result);
                             membership.add(a);
                             System.out.println(result + " " + Variables.get(v).name + " " + t.name);
@@ -77,6 +79,7 @@ public class Fuzzy {
             }
 
         }
+        System.out.println("\n\n----------------------------------------------------------------------");
     }
 
 
@@ -93,24 +96,24 @@ public class Fuzzy {
     }
 
     public void Inference() {
-        System.out.println("************************");
+        System.out.println("Inference: \n\n");
         for (Rule r : Rules) {
             ArrayList<Double> R = new ArrayList<>();
             String[] IF = r.body.split("then");
             String AfterIF[] = IF[1].split("=");
             String[] And = IF[0].split("AND");
             String[] Or = IF[0].split("OR");
-            System.out.println(r.body);
+            System.out.println("Rule : "+r.body);
             if (And.length > 1) {
                 for (String a : And) {
                     String[] equal = a.split("=");
 
                     double y = getmembership(equal);
-                    System.out.println(equal[0] + "  " + equal[1] + " " + y);
+                    System.out.println("Term:"+equal[0] + "  " + equal[1] + " " + y);
                     R.add(y);
                 }
                 int minIndex = R.indexOf(Collections.min(R));
-                System.out.println(AfterIF[0] + " " + AfterIF[1] + " " + R.get(minIndex));
+                System.out.println("Result:  "+AfterIF[0] + " " + AfterIF[1] + " " + R.get(minIndex));
                 FinalResult.add(new M(AfterIF[0], AfterIF[1], R.get(minIndex)));
             } else {
                 for (String o : Or) {
@@ -118,16 +121,20 @@ public class Fuzzy {
                     String[] equal = o.split("=");
 
                     double y = getmembership(equal);
-                    System.out.println(equal[0] + "  " + equal[1] + " " + y);
+                    System.out.println("Term:"+equal[0] + "  " + equal[1] + " " + y);
                     R.add(y);
 
                 }
                 int maxIndex = R.indexOf(Collections.max(R));
-                System.out.println(AfterIF[0] + " " + AfterIF[1] + " " + R.get(maxIndex));
+                System.out.println("Result:  "+ AfterIF[0] + " " + AfterIF[1] + " " + R.get(maxIndex));
                 FinalResult.add(new M(AfterIF[0], AfterIF[1], R.get(maxIndex)));
             }
             System.out.println("________________");
         }
+        
+        System.out.println("\n\n----------------------------------------------------------------------");
+        print();
+        System.out.println("----------------------------------------------------------------------\n\n");
     }
 
     public void readInput() throws FileNotFoundException, IOException {
@@ -176,6 +183,7 @@ public class Fuzzy {
     }
 
     public void DeFuzzification() {
+        System.out.println("DeFuzzification: \n\n");
         Variable OutPutVariable = Variables.get(Variables.size() - 1);
         ArrayList<Point> points = new ArrayList<>();
 //        HashMap<String , Double> CX = new HashMap<String,Double>();
@@ -214,33 +222,31 @@ public class Fuzzy {
             SumOfMemberValues+=FinalResult.get(i).result;
         }
         double Nomrator = 0.0;
+        System.out.println("Term      Centroid                result\n\n");
         for (int i = 0; i < FinalResult.size(); i++) {
-            System.out.println(getIndex(FinalResult.get(i).term)+"  "+FinalResult.get(i).term+"    ");
+            double y = getIndex(FinalResult.get(i).term) ;
+            System.out.println(FinalResult.get(i).term+"  "+y+"  "+"    "+FinalResult.get(i).result);
             
 //            System.out.println(CX.get(FinalResult.get(i).term).doubleValue());
-            System.out.println("-----------");
-       Nomrator+=(double)(FinalResult.get(i).result  *getIndex(FinalResult.get(i).term));
+            System.out.println("__________________");
+       Nomrator+=(double)(FinalResult.get(i).result  *y);
         }
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        System.out.println(Nomrator/SumOfMemberValues);
-        
-        
-
+        System.out.println("\n\nfinal result:  "+Nomrator/SumOfMemberValues);        
     }
     void print()
     {
+        System.out.println("term"+"  "+"result");
         for (M a : FinalResult) {
-                System.out.println("**************"+a.term +"  "+a.result);
+                System.out.println(a.term +"  "+a.result);
         }
     }
-    
+    boolean []arr = new boolean [CX.size()];
         private double getIndex(String key)
     {
        for (M a : CX) {
             
             if (a.term.trim().equals(key.trim()))// tirm to remove space
             {
-                //System.out.println("/////////////"+a.term + "  "+ key+"  "+a.result);
                 return a.result;
             }
         }
