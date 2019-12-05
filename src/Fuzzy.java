@@ -96,13 +96,15 @@ public class Fuzzy {
         System.out.println("************************");
         for(Rule  r: Rules)
         {
+            
             ArrayList<Double> R= new ArrayList<>();
             String[]IF =r.body.split("then");
             String AfterIF[]=IF[1].split("=");
+
             String[]And=IF[0].split("AND");
             String[]Or=IF[0].split("OR");
             System.out.println(r.body);
-            if(And.length==2){
+            if(And.length>1){
             for(String a: And)
             {
                 String[]equal=a.split("=");
@@ -133,9 +135,6 @@ public class Fuzzy {
              System.out.println("________________");
         }
     }
-    
-    
-    
     public void readInput() throws FileNotFoundException, IOException {
         File file = new File("input.txt");
         BufferedReader br = new BufferedReader(new FileReader(file));
@@ -165,9 +164,7 @@ public class Fuzzy {
                 for (String k : ins) {
                     t.Range.add(Integer.parseInt(k));
                 }
-
                 v.Terms.add(t);
-
             }
             Variables.add(v);
         }
