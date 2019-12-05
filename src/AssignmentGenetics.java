@@ -22,6 +22,9 @@ public class AssignmentGenetics {
         f.readInput();
         f.FuzziFication();
         f.Inference();
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        f.print();
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         f.DeFuzzification();
     }
     

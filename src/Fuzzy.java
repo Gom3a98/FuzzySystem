@@ -27,6 +27,7 @@ public class Fuzzy {
     ArrayList<M> FinalResult = new ArrayList<M>();
     ArrayList<Variable> Variables = new ArrayList<>();
     ArrayList<M> membership = new ArrayList<M>();
+    ArrayList<M> CX = new ArrayList<>();
 
     class Point {
 
@@ -78,18 +79,7 @@ public class Fuzzy {
         }
     }
 
-    private double getIndex(String key)
-    {
-       for (M a : FinalResult) {
 
-            if (a.term.trim().equals(key.trim()))// tirm to remove space
-            {
-
-                return a.result;
-            }
-        }
-       return 0.0;
-    }
     double getmembership(String equal[]) {
         for (M a : membership) {
 
@@ -189,7 +179,7 @@ public class Fuzzy {
         Variable OutPutVariable = Variables.get(Variables.size() - 1);
         ArrayList<Point> points = new ArrayList<>();
 //        HashMap<String , Double> CX = new HashMap<String,Double>();
-        ArrayList<M> CX = new ArrayList<>();
+        
         for (Term t : OutPutVariable.Terms) {
            
         }
@@ -224,17 +214,37 @@ public class Fuzzy {
             SumOfMemberValues+=FinalResult.get(i).result;
         }
         double Nomrator = 0.0;
-        for (int i = 0; i < CX.size(); i++) {
-            System.out.println(CX.get(i).result  +"   "+getIndex(FinalResult.get(i).term)+"  "+CX.get(i).term+"    "+FinalResult.get(i).term);
+        for (int i = 0; i < FinalResult.size(); i++) {
+            System.out.println(getIndex(FinalResult.get(i).term)+"  "+FinalResult.get(i).term+"    ");
             
 //            System.out.println(CX.get(FinalResult.get(i).term).doubleValue());
             System.out.println("-----------");
-       Nomrator+=(double)(CX.get(i).result  *getIndex(FinalResult.get(i).term));
+       Nomrator+=(double)(FinalResult.get(i).result  *getIndex(FinalResult.get(i).term));
         }
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         System.out.println(Nomrator/SumOfMemberValues);
         
         
 
+    }
+    void print()
+    {
+        for (M a : FinalResult) {
+                System.out.println("**************"+a.term +"  "+a.result);
+        }
+    }
+    
+        private double getIndex(String key)
+    {
+       for (M a : CX) {
+            
+            if (a.term.trim().equals(key.trim()))// tirm to remove space
+            {
+                //System.out.println("/////////////"+a.term + "  "+ key+"  "+a.result);
+                return a.result;
+            }
+        }
+       return 0.0;
     }
     
 }
