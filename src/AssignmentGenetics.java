@@ -22,6 +22,7 @@ public class AssignmentGenetics {
         f.readInput();
         f.FuzziFication();
         f.Inference();
+        f.DeFuzzification();
     }
     
 }
