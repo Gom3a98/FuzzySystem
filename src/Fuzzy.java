@@ -185,14 +185,9 @@ public class Fuzzy {
     public void DeFuzzification() {
         System.out.println("DeFuzzification: \n\n");
         Variable OutPutVariable = Variables.get(Variables.size() - 1);
-        ArrayList<Point> points = new ArrayList<>();
-//        HashMap<String , Double> CX = new HashMap<String,Double>();
-        
-        for (Term t : OutPutVariable.Terms) {
-           
-        }
-        for (Term t : OutPutVariable.Terms) {
 
+        for (Term t : OutPutVariable.Terms) {
+        ArrayList<Point> points = new ArrayList<>();
             for (int i = 0; i < t.Range.size(); i++) {
                 Point p = new Point();
                 p.x = t.Range.get(i);
